@@ -5,7 +5,13 @@ const app = express();
 
 app.get('/api', (req, res) => {
   res.json({
-    message: 'Hello World!!!'
+    message: 'Welcome to the API'
+  });
+});
+
+app.post('/api/posts', (req, res) => {
+  res.json({
+    message: 'Post created...'
   });
 });
 
