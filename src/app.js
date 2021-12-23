@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const app = express();
+const env = require('./env');
 
 app.get('/api', (req, res) => {
   res.json({
@@ -23,7 +24,7 @@ app.post('/api/login', (req, res) => {
     email: 'agus@rani.com'
   };
 
-  jwt.sign({ user }, 'secretkey', (error, token) => {
+  jwt.sign({ user }, env.secretkey, (error, token) => {
     res.json({ token });
   });
 });
