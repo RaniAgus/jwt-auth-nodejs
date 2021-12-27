@@ -13,10 +13,9 @@ app.use(express.json());
  * components:
  *   securitySchemes:
  *     AccessToken:
- *       type: apiKey
- *       in: header
- *       description: Bearer <token>
- *       name: Authorization
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  * tags:
  *   - name: Posts
  *     description: The posts managing API
