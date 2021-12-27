@@ -1,8 +1,30 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const env = require('./env');
 
 const app = express();
-const env = require('./env');
+
+const swaggerOptions = {
+  apis: ["./src/*.js"],
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "JWT Auth NodeJS",
+      version: "0.0.1"
+    },
+    servers: [
+      {
+        url: "http://localhost:5000/"
+      }
+    ],
+  }
+};
+
+const swaggerSpecs = swaggerJsdoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 app.get('/api', (req, res) => {
   res.json({
@@ -72,4 +94,4 @@ function verifyToken(req, res, next) {
   next();
 }
 
-app.listen(5000, () => console.log('Server started at http://localhost:5000/'));
+app.listen(5000, () => console.log('Server started at http://localhost:5000/api-docs/'));
