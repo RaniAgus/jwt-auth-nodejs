@@ -1,7 +1,7 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const jwt = require('./jwt');
 const env = require('./env');
 
 const app = express();
@@ -56,42 +56,37 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
  *              
  */
 app.get('/api/posts', verifyToken, (req, res) => {
-  jwt.verify(req.token, env.secretkey, (error, authData) => {
-    if (error) {
-      res.sendStatus(401); // Unauthorized
-      return;
-    }
-
-    res.json({ message: 'Funciona el JWT!', authData });
-  });
+  res.json({ message: 'Funciona el JWT!', authData: req.authData });
 });
 
 // TOKEN FORMAT
 // Authorization: Bearer <access_token>
 
 // Verify Token
-function verifyToken(req, res, next) {
+async function verifyToken(req, res, next) {
   // Get auth header value
   const bearerHeader = req.headers['authorization'];
 
   // Check if bearer is undefined
   if (typeof(bearerHeader) === 'undefined') {
-    res.sendStatus(401); // Unauthorized
-    return;
+    return res.sendStatus(401); // Unauthorized
   }
 
   // Split at the space and get token from array
   const [bearer, token] = bearerHeader.split(' ');
   if (bearer !== 'Bearer') {
-    res.sendStatus(401); // Unauthorized
-    return;
+    return res.sendStatus(401); // Unauthorized
   }
 
-  // Set the token
-  req.token = token;
+  // Get auth data from token
+  try {
+    req.authData = await jwt.verify(token, env.secretkey);
+  } catch(error) {
+    return res.sendStatus(401); // Unauthorized
+  }
 
   // Next middleware
-  next();
+  return next();
 }
 
 app.listen(env.port, () => {
