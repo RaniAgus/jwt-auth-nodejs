@@ -9,6 +9,6 @@ module.exports = {
 
 function getOrFail(variable) {
   return process.env[variable] || (() => { 
-    throw Error(`${variable} not set or empty`)
+    throw Error(`Variable ${variable} is not set or empty`)
   })();
 }
