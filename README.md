@@ -1,5 +1,7 @@
 # jwt-auth-nodejs
 
+JWT authentication example using Node.js, Express & Swagger.
+
 ## Requirements
 
 - docker: https://docs.docker.com/engine/install/ubuntu/
