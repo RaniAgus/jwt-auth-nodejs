@@ -31,7 +31,8 @@ app.post('/api/login', (req, res) => {
 
   jwt.sign(
     { user }, 
-    env.secretkey, 
+    env.secretkey,
+    { expiresIn: '30s' },
     (error, token) => {
       if (error) {
         res.sendStatus(500); // Internal server error
