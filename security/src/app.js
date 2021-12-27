@@ -89,5 +89,5 @@ app.post('/api/login', (req, res) => {
 });
 
 app.listen(env.port, () => {
-  console.log(`Server started at http://localhost:${env.port}/api-docs/`);
+  console.log(`Security started at http://localhost:${env.port}/api-docs/`);
 });

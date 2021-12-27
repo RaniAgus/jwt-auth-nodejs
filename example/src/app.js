@@ -95,5 +95,5 @@ function verifyToken(req, res, next) {
 }
 
 app.listen(env.port, () => {
-  console.log(`Server started at http://localhost:${env.port}/api-docs/`);
+  console.log(`Example started at http://localhost:${env.port}/api-docs/`);
 });
