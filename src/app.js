@@ -5,8 +5,8 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const env = require('./env');
 
 const app = express();
-const swaggerDoc = swaggerJsdoc(require('../docs/swagger.json'));
-const swaggerConfig = require('../docs/swagger-config.json');
+
+app.use(express.json());
 
 /**
  * @swagger
@@ -23,7 +23,18 @@ const swaggerConfig = require('../docs/swagger-config.json');
  *   - name: Security
  *     description: The security managing API
  */
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerConfig));
+const swaggerDocument = swaggerJsdoc({
+  apis: ["./src/*.js"],
+  definition: {
+    openapi: "3.0.3",
+    info: {
+      title: "Example",
+      version: "1.0.0"
+    }
+  }
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 /**
  * @swagger
@@ -72,7 +83,7 @@ app.get('/api/posts', verifyToken, (req, res) => {
  *              schema:
  *                type: object
  *                properties:
- *                  user:
+ *                  username:
  *                    type: string
  *                  password:
  *                    type: string
@@ -86,18 +97,23 @@ app.get('/api/posts', verifyToken, (req, res) => {
  *                properties:
  *                  token:
  *                    type: string
- *        404:
- *          description: The user was not found
+ *        401:
+ *          description: Invalid username or password
  *        500:
  *          description: Some server error
  *              
  */
 app.post('/api/login', (req, res) => {
+  if (!req.body.username || !req.body.password) {
+    res.sendStatus(401); // Unauthorized
+    return;
+  }
+
   // Mock user
   const user = {
     id: 1,
-    username: 'raniagus',
-    email: 'agus@rani.com'
+    username: req.body.username,
+    email: `${req.body.username}@example.com`
   };
 
   jwt.sign(
