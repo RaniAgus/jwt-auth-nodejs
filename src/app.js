@@ -143,4 +143,6 @@ function verifyToken(req, res, next) {
   next();
 }
 
-app.listen(5000, () => console.log('Server started at http://localhost:5000/api-docs/'));
+app.listen(env.port, () => {
+  console.log(`Server started at http://localhost:${env.port}/api-docs/`);
+});

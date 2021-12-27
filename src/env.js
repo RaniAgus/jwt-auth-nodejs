@@ -2,7 +2,10 @@ const dotenv = require('dotenv')
 
 dotenv.config();
 
-exports.secretkey = getOrFail('SECRET_KEY');
+module.exports = {
+  secretkey: getOrFail('SECRET_KEY'),
+  port: getOrFail('PORT')
+}
 
 function getOrFail(variable) {
   return process.env[variable] || (() => { 
