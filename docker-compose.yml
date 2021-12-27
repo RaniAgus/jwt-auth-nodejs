@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  example:
+    build: 
+      context: ./example
+      dockerfile: Dockerfile
+    environment:
+      - SECRET_KEY
+      - PORT=${EXAMPLE_PORT}
+    ports:
+      - ${EXAMPLE_PORT}:${EXAMPLE_PORT}
+  security:
+    build: 
+      context: ./security
+      dockerfile: Dockerfile
+    environment:
+      - SECRET_KEY
+      - PORT=${SECURITY_PORT}
+    ports:
+      - ${SECURITY_PORT}:${SECURITY_PORT}
