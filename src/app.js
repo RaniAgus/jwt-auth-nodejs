@@ -5,34 +5,49 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const env = require('./env');
 
 const app = express();
+const swaggerDoc = swaggerJsdoc(require('../docs/swagger.json'));
+const swaggerConfig = require('../docs/swagger-config.json');
 
-const swaggerOptions = {
-  apis: ["./src/*.js"],
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "JWT Auth NodeJS",
-      version: "0.0.1"
-    },
-    servers: [
-      {
-        url: "http://localhost:5000/"
-      }
-    ],
-  }
-};
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     AccessToken:
+ *       type: apiKey
+ *       in: header
+ *       description: Bearer <token>
+ *       name: Authorization
+ * tags:
+ *   - name: Posts
+ *     description: The posts managing API
+ *   - name: Security
+ *     description: The security managing API
+ */
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, swaggerConfig));
 
-const swaggerSpecs = swaggerJsdoc(swaggerOptions);
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
-
-app.get('/api', (req, res) => {
-  res.json({
-    message: 'Welcome to the API'
-  });
-});
-
-app.post('/api/posts', verifyToken, (req, res) => {
+/**
+ * @swagger
+ * /api/posts:
+ *    get:
+ *      summary: Returns a welcome message to the API
+ *      tags: [Posts]
+ *      security:
+ *        - AccessToken: []
+ *      responses:
+ *        200:
+ *          description: The welcome message
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *        401:
+ *          description: Access token is missing or invalid
+ *              
+ */
+app.get('/api/posts', verifyToken, (req, res) => {
   jwt.verify(req.token, env.secretkey, (error, authData) => {
     if (error) {
       res.sendStatus(401); // Unauthorized
@@ -43,6 +58,40 @@ app.post('/api/posts', verifyToken, (req, res) => {
   });
 });
 
+
+/**
+ * @swagger
+ * /api/login:
+ *    post:
+ *      summary: Login an user
+ *      tags: [Security]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  user:
+ *                    type: string
+ *                  password:
+ *                    type: string
+ *      responses:
+ *        200:
+ *          description: The authentication token
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  token:
+ *                    type: string
+ *        404:
+ *          description: The user was not found
+ *        500:
+ *          description: Some server error
+ *              
+ */
 app.post('/api/login', (req, res) => {
   // Mock user
   const user = {
