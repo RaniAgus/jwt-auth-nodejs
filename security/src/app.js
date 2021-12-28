@@ -3,6 +3,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const jwt = require('./jwt');
 const env = require('./env');
+const User = require('./user');
 
 const app = express();
 
@@ -66,11 +67,11 @@ app.post('/api/login', async (req, res) => {
   }
 
   // Mock user
-  const user = {
+  const user = new User({
     id: 1,
     username: req.body.username,
     email: `${req.body.username}@example.com`
-  };
+  });
 
   try {
     const token = await jwt.sign({ user }, env.secretkey, { expiresIn: '1h' });

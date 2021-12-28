@@ -3,6 +3,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const jwt = require('./jwt');
 const env = require('./env');
+const User = require('./user');
 
 const app = express();
 
@@ -37,7 +38,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
  * @swagger
  * /api/posts:
  *    get:
- *      summary: Returns a welcome message to the API
+ *      summary: >
+ *        Returns a welcome message and the authentication data retreived from
+ *        token
  *      tags: [Posts]
  *      security:
  *        - AccessToken: []
@@ -49,8 +52,19 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
  *              schema:
  *                type: object
  *                properties:
- *                  message:
+ *                  message: 
  *                    type: string
+ *                  authData:
+ *                    type: object
+ *                    properties:
+ *                      user:
+ *                        $ref: '#/components/schemas/User'
+ *                      iat:
+ *                        type: integer
+ *                        format: int64
+ *                      exp:
+ *                        type: integer
+ *                        format: int64
  *        401:
  *          description: Access token is missing or invalid
  *              
